@@ -18,12 +18,13 @@
  */
 
 import { RequestBase } from '@_types/Base'
-import { Id } from '@_types/common'
+import { Id, MediaType } from '@_types/common'
 import { Duration } from '@_types/Time'
 import { TaskSettings } from '@inference/_types/Services'
 
 /**
- * Perform streaming inference.
+ * Perform streaming completion inference on the service.
+ *
  * Get real-time responses for completion tasks by delivering answers incrementally, reducing response times during computation.
  * This API works only with the completion task type.
  *
@@ -32,6 +33,7 @@ import { TaskSettings } from '@inference/_types/Services'
  * This API requires the `monitor_inference` cluster privilege (the built-in `inference_admin` and `inference_user` roles grant this privilege). You must use a client that supports streaming.
  * @rest_spec_name inference.stream_completion
  * @availability stack since=8.16.0 stability=stable visibility=public
+ * @availability serverless stability=stable visibility=public
  * @cluster_privileges monitor_inference
  * @doc_id inference-api-stream
  */
@@ -48,6 +50,8 @@ export interface Request extends RequestBase {
      */
     inference_id: Id
   }
+  request_media_type: MediaType.Json
+  response_media_type: MediaType.EventStream
   query_parameters: {
     /**
      * The amount of time to wait for the inference request to complete.
@@ -64,7 +68,7 @@ export interface Request extends RequestBase {
      */
     input: string | string[]
     /**
-     * Optional task settings
+     * Task settings for the individual inference request. These settings are specific to the <task_type> you specified and override the task settings specified when initializing the service.
      */
     task_settings?: TaskSettings
   }

@@ -153,11 +153,12 @@ export class SearchUsageStats {
   sections: Dictionary<Name, long>
   retrievers: Dictionary<Name, long>
   /* @availability stack since=9.2.0 */
-  extended: Dictionary<Name, ExtendedSearchUsage>
+  extended: ExtendedSearchUsage
 }
 
 export class ExtendedSearchUsage {
   retrievers?: ExtendedRetrieversSearchUsage
+  section?: ExtendedSectionSearchUsage
 }
 
 export class ExtendedRetrieversSearchUsage {
@@ -166,6 +167,18 @@ export class ExtendedRetrieversSearchUsage {
 
 export class ExtendedTextSimilarityRetrieverUsage {
   chunk_rescorer?: long
+}
+
+export class ExtendedSectionSearchUsage {
+  sort?: Dictionary<SortType, long>
+}
+
+export enum SortType {
+  _doc,
+  _geo_distance,
+  _score,
+  _script,
+  field_sort
 }
 
 export class DenseVectorStats {
@@ -188,6 +201,10 @@ export class DenseVectorOffHeapStats {
   total_veq_size?: ByteSize
   total_vex_size_bytes: long
   total_vex_size?: ByteSize
+  total_cenif_size_bytes: long
+  total_cenif_size?: ByteSize
+  total_clivf_size_bytes: long
+  total_clivf_size?: ByteSize
   fielddata?: Dictionary<string, Dictionary<string, long>>
 }
 

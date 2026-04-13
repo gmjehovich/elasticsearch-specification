@@ -18,7 +18,7 @@
  */
 
 import { RequestBase } from '@_types/Base'
-import { Id } from '@_types/common'
+import { Id, MediaType } from '@_types/common'
 import { InferenceEndpoint } from '@inference/_types/Services'
 import { TaskType } from '@inference/_types/TaskType'
 
@@ -32,6 +32,7 @@ import { TaskType } from '@inference/_types/TaskType'
  * However, if you do not plan to use the inference APIs to use these models or if you want to use non-NLP models, use the machine learning trained model APIs.
  * @rest_spec_name inference.update
  * @availability stack since=8.17.0 stability=stable visibility=public
+ * @availability serverless stability=stable visibility=public
  * @cluster_privileges manage_inference
  * @doc_id inference-api-update
  */
@@ -56,6 +57,8 @@ export interface Request extends RequestBase {
      */
     task_type?: TaskType
   }
+  request_media_type: MediaType.Json
+  response_media_type: MediaType.Json
   /** @codegen_name inference_config */
   body: InferenceEndpoint
 }

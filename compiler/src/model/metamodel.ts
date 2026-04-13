@@ -440,6 +440,7 @@ export class Endpoint {
   name: string
   description: string
   docUrl: string
+  docUrlServerless: string
   docId?: string
   extDocId?: string
   extDocUrl?: string
@@ -469,6 +470,8 @@ export class Endpoint {
     index?: string[]
     cluster?: string[]
   }
+
+  codegenExclude?: boolean
 }
 
 export class UrlTemplate {

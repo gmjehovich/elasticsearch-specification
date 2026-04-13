@@ -25,6 +25,7 @@ import {
   Fields,
   IndexAlias,
   IndexName,
+  MediaType,
   Routing,
   SearchType,
   SuggestMode
@@ -53,6 +54,7 @@ import { Checkpoint } from '../_types/Checkpoints'
 
 /**
  * Run a Fleet search.
+ *
  * The purpose of the Fleet search API is to provide an API where the search will be run only
  * after the provided checkpoint has been processed and is visible for searches inside of Elasticsearch.
  * @rest_spec_name fleet.search
@@ -72,9 +74,20 @@ export interface Request extends RequestBase {
     /**
      * A single target to search. If the target is an index alias, it must resolve to a single index.
      */
+    // eslint-disable-next-line es-spec-validator/no-inline-unions -- TODO: create named alias
     index: IndexName | IndexAlias
   }
+  request_media_type: MediaType.Json
+  response_media_type: MediaType.Json
   query_parameters: {
+    /**
+     * A setting that does two separate checks on the index expression.
+     * If `false`, the request returns an error (1) if any wildcard expression
+     * (including `_all` and `*`) resolves to zero matching indices or (2) if the
+     * complete set of resolved indices, aliases or data streams is empty after all
+     * expressions are evaluated. If `true`, index expressions that resolve to no
+     * indices are allowed and the request returns an empty result.
+     */
     allow_no_indices?: boolean
     analyzer?: string
     analyze_wildcard?: boolean
@@ -86,6 +99,11 @@ export interface Request extends RequestBase {
     expand_wildcards?: ExpandWildcards
     explain?: boolean
     ignore_throttled?: boolean
+    /**
+     * If `false`, the request returns an error if it targets a concrete (non-wildcarded)
+     * index, alias, or data stream that is missing, closed, or otherwise unavailable.
+     * If `true`, unavailable concrete targets are silently ignored.
+     */
     ignore_unavailable?: boolean
     lenient?: boolean
     max_concurrent_shard_requests?: integer

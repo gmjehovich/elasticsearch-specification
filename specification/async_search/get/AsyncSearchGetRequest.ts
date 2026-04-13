@@ -18,7 +18,7 @@
  */
 
 import { RequestBase } from '@_types/Base'
-import { Id } from '@_types/common'
+import { Id, MediaType } from '@_types/common'
 import { Duration } from '@_types/Time'
 
 /**
@@ -43,6 +43,7 @@ export interface Request extends RequestBase {
     /** A unique identifier for the async search. */
     id: Id
   }
+  response_media_type: MediaType.Json
   query_parameters: {
     /**
      * The length of time that the async search should be available in the cluster.
@@ -52,6 +53,9 @@ export interface Request extends RequestBase {
      * If the search is completed, its saved results are deleted.
      */
     keep_alive?: Duration
+    /**
+     * Specify whether aggregation and suggester names should be prefixed by their respective types in the response
+     */
     typed_keys?: boolean
     /**
      * Specifies to wait for the search to be completed up until the provided timeout.
@@ -59,5 +63,15 @@ export interface Request extends RequestBase {
      * By default no timeout is set meaning that the currently available results will be returned without any additional wait.
      */
     wait_for_completion_timeout?: Duration
+    /**
+     * Specifies whether the response should contain intermediate results if the query is still running when the wait_for_completion_timeout
+     * expires or if no wait_for_completion_timeout is specified.
+     * If true and the search is still running, the search response
+     * will include any hits and partial aggregations that are available.
+     * If false and the search is still running, the search response will not include any hits (but possibly include
+     * total hits) nor will include any partial aggregations.
+     * When not specified, the intermediate results are returned for running queries.
+     */
+    return_intermediate_results?: boolean
   }
 }

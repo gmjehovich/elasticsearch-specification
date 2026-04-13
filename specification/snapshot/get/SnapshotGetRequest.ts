@@ -18,7 +18,7 @@
  */
 
 import { RequestBase } from '@_types/Base'
-import { Name, Names } from '@_types/common'
+import { MediaType, Name, Names } from '@_types/common'
 import { integer } from '@_types/Numeric'
 import { SortOrder } from '@_types/sort'
 import { Duration } from '@_types/Time'
@@ -59,6 +59,7 @@ export interface Request extends RequestBase {
      */
     snapshot: Names
   }
+  response_media_type: MediaType.Json
   query_parameters: {
     /**
      * An offset identifier to start pagination from as returned by the next field in the response body.
@@ -123,8 +124,8 @@ export interface Request extends RequestBase {
     offset?: integer
     /**
      * The maximum number of snapshots to return.
-     * The default is 0, which means to return all that match the request without limit.
-     * @server_default 0
+     * The default is -1, which means to return all that match the request without limit.
+     * @server_default -1
      * @availability stack since=7.14.0
      * @availability serverless
      */

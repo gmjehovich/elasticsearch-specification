@@ -18,16 +18,18 @@
  */
 
 import { RequestBase } from '@_types/Base'
-import { TimeUnit } from '@_types/Time'
+import { Duration } from '@_types/Time'
+import { MediaType } from '@_types/common'
 
 /**
  * Get the status of streams.
  *
  * Get the current status for all types of streams.
  * @rest_spec_name streams.status
- * @availability stack since=9.1.0 stability=experimental visibility=feature_flag feature_flag=logs_stream
+ * @availability stack since=9.1.0 stability=experimental visibility=public
  * @cluster_privileges monitor
  * @doc_id streams-status
+ * @doc_tag streams
  */
 export interface Request extends RequestBase {
   urls: [
@@ -36,12 +38,13 @@ export interface Request extends RequestBase {
       methods: ['GET']
     }
   ]
+  response_media_type: MediaType.Json
   query_parameters: {
     /**
      * Period to wait for a connection to the master node. If no response is received before the timeout expires, the request fails and returns an error.
      *
      * @server_default 30s
      */
-    master_timeout?: TimeUnit
+    master_timeout?: Duration
   }
 }

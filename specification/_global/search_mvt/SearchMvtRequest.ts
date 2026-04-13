@@ -19,7 +19,13 @@
 
 import { AggregationContainer } from '@_types/aggregations/AggregationContainer'
 import { RequestBase } from '@_types/Base'
-import { Field, Fields, Indices, ProjectRouting } from '@_types/common'
+import {
+  Field,
+  Fields,
+  Indices,
+  MediaType,
+  ProjectRouting
+} from '@_types/common'
 import { RuntimeFields } from '@_types/mapping/RuntimeFields'
 import { integer } from '@_types/Numeric'
 import { QueryContainer } from '@_types/query_dsl/abstractions'
@@ -136,14 +142,14 @@ export interface Request extends RequestBase {
     }
   ]
   path_parts: {
-    /*
+    /**
      * A list of indices, data streams, or aliases to search.
      * It supports wildcards (`*`).
      * To search all data streams and indices, omit this parameter or use `*` or `_all`.
      * To search a remote cluster, use the `<cluster>:<target>` syntax.
      */
     index: Indices
-    /*
+    /**
      * A field that contains the geospatial data to return.
      * It must be a `geo_point` or `geo_shape` field.
      * The field must have doc values enabled. It cannot be a nested field.
@@ -153,13 +159,15 @@ export interface Request extends RequestBase {
      * This behavior may change in a future release.
      */
     field: Field
-    /* The zoom level of the vector tile to search. It accepts `0` to `29`. */
+    /** The zoom level of the vector tile to search. It accepts `0` to `29`. */
     zoom: ZoomLevel
-    /* The X coordinate for the vector tile to search. */
+    /** The X coordinate for the vector tile to search. */
     x: Coordinate
-    /* The Y coordinate for the vector tile to search. */
+    /** The Y coordinate for the vector tile to search. */
     y: Coordinate
   }
+  request_media_type: MediaType.Json
+  response_media_type: MediaType.MapboxVectorTile
   query_parameters: {
     /**
      * If `false`, the meta layer's feature is the bounding box of the tile.
@@ -177,6 +185,7 @@ export interface Request extends RequestBase {
     extent?: integer
     /**
      * Aggregation used to create a grid for `field`.
+     * @server_default geotile
      */
     grid_agg?: GridAggregationType
     /**
@@ -194,18 +203,6 @@ export interface Request extends RequestBase {
      * @server_default grid
      */
     grid_type?: GridType
-    /**
-     * Specifies a subset of projects to target for the search using project
-     * metadata tags in a subset of Lucene query syntax.
-     * Allowed Lucene queries: the _alias tag and a single value (possibly wildcarded).
-     * Examples:
-     *  _alias:my-project
-     *  _alias:_origin
-     *  _alias:*pr*
-     * Supported in serverless only.
-     * @availability serverless stability=stable visibility=feature_flag feature_flag=serverless.cross_project.enabled
-     */
-    project_routing?: ProjectRouting
     /**
      * Maximum number of features to return in the hits layer. Accepts 0-10000.
      * If 0, results don't include the hits layer.
@@ -230,6 +227,7 @@ export interface Request extends RequestBase {
      *
      * All attributes from the original features will also be copied to the new label features.
      * In addition, the new features will be distinguishable using the tag `_mvt_label_position`.
+     * @server_default false
      */
     with_labels?: boolean
   }
@@ -342,5 +340,17 @@ export interface Request extends RequestBase {
      * In addition, the new features will be distinguishable using the tag `_mvt_label_position`.
      */
     with_labels?: boolean
+    /**
+     * Specifies a subset of projects to target for the search using project
+     * metadata tags in a subset of Lucene query syntax.
+     * Allowed Lucene queries: the _alias tag and a single value (possibly wildcarded).
+     * Examples:
+     *  _alias:my-project
+     *  _alias:_origin
+     *  _alias:*pr*
+     * Supported in serverless only.
+     * @availability serverless stability=stable visibility=feature_flag feature_flag=serverless.cross_project.enabled
+     */
+    project_routing?: ProjectRouting
   }
 }

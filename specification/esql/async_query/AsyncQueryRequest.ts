@@ -18,15 +18,17 @@
  */
 
 import { RequestBase } from '@_types/Base'
-import { FieldValue } from '@_types/common'
+import { MediaType, ProjectRouting } from '@_types/common'
 import { QueryContainer } from '@_types/query_dsl/abstractions'
 import { Duration } from '@_types/Time'
 import { EsqlFormat } from '@esql/_types/QueryParameters'
 import { TableValuesContainer } from '@esql/_types/TableValuesContainer'
+import { ESQLParams } from '@esql/_types/types'
 import { Dictionary } from '@spec_utils/Dictionary'
 
 /**
  * Run an async ES|QL query.
+ *
  * Asynchronously run an ES|QL (Elasticsearch query language) query, monitor its progress, and retrieve results when they become available.
  *
  * The API accepts the same parameters and request body as the synchronous query API, along with additional async related properties.
@@ -37,6 +39,14 @@ import { Dictionary } from '@spec_utils/Dictionary'
  * @index_privileges read
  */
 export interface Request extends RequestBase {
+  urls: [
+    {
+      path: '/_query/async'
+      methods: ['POST']
+    }
+  ]
+  request_media_type: MediaType.Json
+  response_media_type: MediaType.Json
   query_parameters: {
     /**
      * If `true`, partial results will be returned if there are shard failures, but the query can continue to execute on other clusters and shards.
@@ -49,6 +59,7 @@ export interface Request extends RequestBase {
     /**
      * The character to use between values within a CSV row.
      * It is valid only for the CSV format.
+     * @server_default ,
      */
     delimiter?: string
     /**
@@ -79,7 +90,14 @@ export interface Request extends RequestBase {
      * Specify a Query DSL query in the filter parameter to filter the set of documents that an ES|QL query runs on.
      */
     filter?: QueryContainer
-    /*
+    /**
+     * Sets the default timezone of the query.
+     * @availability stack since=9.4.0 stability=stable
+     * @availability serverless stability=stable
+     * @doc_id esql-timezones
+     */
+    time_zone?: string
+    /**
      * Returns results (especially dates) formatted per the conventions of the locale.
      * @doc_id esql-returning-localized-results
      */
@@ -88,7 +106,7 @@ export interface Request extends RequestBase {
      * To avoid any attempts of hacking or code injection, extract the values in a separate list of parameters. Use question mark placeholders (?) in the query string for each of the parameters.
      * @doc_id esql-query-params
      */
-    params?: Array<FieldValue>
+    params?: ESQLParams
     /**
      * If provided and `true` the response will include an extra `profile` object
      * with information on how the query was executed. This information is for human debugging
@@ -110,9 +128,16 @@ export interface Request extends RequestBase {
      * object with information about the clusters that participated in the search along with info such as shards
      * count.
      * @server_default false
-     * @aliases include_execution_metadata
      */
     include_ccs_metadata?: boolean
+    /**
+     * When set to `true`, the response will include an extra `_clusters`
+     * object with information about the clusters that participated in the search along with info such as shards
+     * count.
+     * This is similar to `include_ccs_metadata`, but it also returns metadata when the query is not CCS/CPS
+     * @server_default false
+     */
+    include_execution_metadata?: boolean
     /**
      * The period to wait for the request to finish.
      * By default, the request waits for 1 second for the query results.
@@ -135,5 +160,17 @@ export interface Request extends RequestBase {
      * @server_default false
      */
     keep_on_completion?: boolean
+    /**
+     * Specifies a subset of projects to target using project
+     * metadata tags in a subset of Lucene query syntax.
+     * Allowed Lucene queries: the _alias tag and a single value (possibly wildcarded).
+     * Examples:
+     *  _alias:my-project
+     *  _alias:_origin
+     *  _alias:*pr*
+     * Supported in serverless only.
+     * @availability serverless stability=stable visibility=feature_flag feature_flag=serverless.cross_project.enabled
+     */
+    project_routing?: ProjectRouting
   }
 }

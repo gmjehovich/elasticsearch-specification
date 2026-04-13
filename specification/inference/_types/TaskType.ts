@@ -25,10 +25,12 @@ export enum TaskType {
   text_embedding,
   rerank,
   completion,
-  chat_completion
+  chat_completion,
+  embedding
 }
 
 export enum TaskTypeJinaAi {
+  embedding,
   text_embedding,
   rerank
 }
@@ -46,8 +48,9 @@ export enum TaskTypeAlibabaCloudAI {
 }
 
 export enum TaskTypeAmazonBedrock {
-  text_embedding,
-  completion
+  chat_completion,
+  completion,
+  text_embedding
 }
 
 export enum TaskTypeAmazonSageMaker {
@@ -70,7 +73,8 @@ export enum TaskTypeAzureAIStudio {
 
 export enum TaskTypeAzureOpenAI {
   text_embedding,
-  completion
+  completion,
+  chat_completion
 }
 
 export enum TaskTypeCohere {
@@ -111,8 +115,14 @@ export enum TaskTypeGoogleAIStudio {
 }
 
 export enum TaskTypeGoogleVertexAI {
+  chat_completion,
+  completion,
   text_embedding,
   rerank
+}
+
+export enum TaskTypeGroq {
+  chat_completion
 }
 
 export enum TaskTypeHuggingFace {
@@ -134,15 +144,35 @@ export enum TaskTypeMistral {
   completion
 }
 
+export enum TaskTypeNvidia {
+  chat_completion,
+  completion,
+  rerank,
+  text_embedding
+}
+
 export enum TaskTypeOpenAI {
   text_embedding,
   chat_completion,
   completion
 }
 
+export enum TaskTypeOpenShiftAi {
+  text_embedding,
+  chat_completion,
+  completion,
+  rerank
+}
+
 export enum TaskTypeVoyageAI {
   text_embedding,
   rerank
+}
+
+export enum TaskTypeFireworksAI {
+  chat_completion,
+  completion,
+  text_embedding
 }
 
 export enum TaskTypeWatsonx {

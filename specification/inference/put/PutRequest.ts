@@ -18,7 +18,7 @@
  */
 
 import { RequestBase } from '@_types/Base'
-import { Id } from '@_types/common'
+import { Id, MediaType } from '@_types/common'
 import { Duration } from '@_types/Time'
 import { InferenceEndpoint } from '@inference/_types/Services'
 import { TaskType } from '@inference/_types/TaskType'
@@ -33,24 +33,28 @@ import { TaskType } from '@inference/_types/TaskType'
  * The following integrations are available through the inference API. You can find the available task types next to the integration name:
  * * AI21 (`chat_completion`, `completion`)
  * * AlibabaCloud AI Search (`completion`, `rerank`, `sparse_embedding`, `text_embedding`)
- * * Amazon Bedrock (`completion`, `text_embedding`)
+ * * Amazon Bedrock (`chat_completion`, `completion`, `text_embedding`)
  * * Amazon SageMaker (`chat_completion`, `completion`, `rerank`, `sparse_embedding`, `text_embedding`)
  * * Anthropic (`completion`)
- * * Azure AI Studio (`completion`, 'rerank', `text_embedding`)
- * * Azure OpenAI (`completion`, `text_embedding`)
+ * * Azure AI Studio (`completion`, `rerank`, `text_embedding`)
+ * * Azure OpenAI (`chat_completion`, `completion`, `text_embedding`)
  * * Cohere (`completion`, `rerank`, `text_embedding`)
  * * DeepSeek (`chat_completion`, `completion`)
  * * Elasticsearch (`rerank`, `sparse_embedding`, `text_embedding` - this service is for built-in models and models uploaded through Eland)
  * * ELSER (`sparse_embedding`)
+ * * Fireworks AI (`chat_completion`, `completion`, `text_embedding`)
  * * Google AI Studio (`completion`, `text_embedding`)
  * * Google Vertex AI (`chat_completion`, `completion`, `rerank`, `text_embedding`)
+ * * Groq (`chat_completion`)
  * * Hugging Face (`chat_completion`, `completion`, `rerank`, `text_embedding`)
- * * JinaAI (`rerank`, `text_embedding`)
+ * * JinaAI (`embedding`, `rerank`, `text_embedding`)
  * * Llama (`chat_completion`, `completion`, `text_embedding`)
  * * Mistral (`chat_completion`, `completion`, `text_embedding`)
+ * * Nvidia (`chat_completion`, `completion`, `text_embedding`, `rerank`)
  * * OpenAI (`chat_completion`, `completion`, `text_embedding`)
+ * * OpenShift AI (`chat_completion`, `completion`, `rerank`, `text_embedding`)
  * * VoyageAI (`rerank`, `text_embedding`)
- * * Watsonx inference integration (`text_embedding`)
+ * * Watsonx (`chat_completion`, `completion`, `rerank`, `text_embedding`)
  * @rest_spec_name inference.put
  * @availability stack since=8.11.0 stability=stable visibility=public
  * @availability serverless stability=stable visibility=public
@@ -78,6 +82,8 @@ export interface Request extends RequestBase {
      */
     inference_id: Id
   }
+  request_media_type: MediaType.Json
+  response_media_type: MediaType.Json
   query_parameters: {
     /**
      * Specifies the amount of time to wait for the inference endpoint to be created.

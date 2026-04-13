@@ -21,7 +21,6 @@ import {
   Id,
   IndexName,
   InlineGet,
-  Routing,
   SequenceNumber,
   VersionNumber,
   VersionType
@@ -61,7 +60,7 @@ export class ResponseItem {
   _primary_term?: long
   /**
    * The result of the operation.
-   * Successful values are `created`, `deleted`, and `updated`.
+   * Possible values are `created`, `updated`, `deleted`, `noop`, and `not_found`.
    */
   result?: string
   /**
@@ -107,9 +106,9 @@ export class OperationBase {
    */
   _index?: IndexName
   /**
-   * A custom value used to route operations to a specific shard.
+   * A custom value used to route operations to a specific shard, or multiple comma separated values.
    */
-  routing?: Routing
+  routing?: string
   if_primary_term?: long
   if_seq_no?: SequenceNumber
   version?: VersionNumber

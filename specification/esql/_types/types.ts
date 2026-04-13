@@ -18,5 +18,23 @@
  */
 
 import { FieldValue } from '@_types/common'
+import { SingleKeyDictionary } from '@spec_utils/Dictionary'
 
-export type ESQLParam = FieldValue | FieldValue[]
+/**
+ * @codegen_names value, named
+ */
+export type ESQLParams = SingleOrMultiValue[] | NamedValue[]
+export type NamedValue = SingleKeyDictionary<string, SingleOrMultiValue>
+export type SingleOrMultiValue = FieldValue | FieldValue[]
+
+/**
+ *
+ * A non-materialized ES|QL view.
+ *
+ */
+export class ESQLView {
+  /** The name of the ES|QL view */
+  name: string
+  /** The ES|QL query */
+  query: string
+}

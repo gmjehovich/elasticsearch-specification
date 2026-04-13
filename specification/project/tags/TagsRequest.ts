@@ -18,18 +18,36 @@
  */
 
 import { RequestBase } from '@_types/Base'
+import { MediaType, ProjectRouting } from '@_types/common'
 
 /**
+ * Get tags.
+ *
+ * Get the tags that are defined for the project.
  * @doc_id project-tags
  * @rest_spec_name project.tags
  * @availability serverless stability=experimental visibility=public
- * @cluster_privileges monitor
+ * @cluster_privileges read_project_routing,monitor
+ * @doc_tag project
  */
 export interface Request extends RequestBase {
   urls: [
     {
       path: '/_project/tags'
-      methods: ['GET']
+      methods: ['GET', 'POST']
     }
   ]
+  response_media_type: MediaType.Json
+  body?: {
+    /**
+     * A Lucene query using project metadata tags used to filter which projects are returned in the response.
+     * Examples:
+     *  _alias:my-project
+     *  _alias:_origin
+     *  _alias:*pr*
+     * Supported in serverless only.
+     * @availability serverless stability=experimental visibility=feature_flag feature_flag=serverless.cross_project.enabled
+     */
+    project_routing?: ProjectRouting
+  }
 }

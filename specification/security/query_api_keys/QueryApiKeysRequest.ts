@@ -18,6 +18,7 @@
  */
 
 import { RequestBase } from '@_types/Base'
+import { MediaType } from '@_types/common'
 import { integer } from '@_types/Numeric'
 import { Sort, SortResults } from '@_types/sort'
 import { Dictionary } from '@spec_utils/Dictionary'
@@ -47,11 +48,14 @@ export interface Request extends RequestBase {
       methods: ['GET', 'POST']
     }
   ]
+  request_media_type: MediaType.Json
+  response_media_type: MediaType.Json
   query_parameters: {
     /**
      * Return the snapshot of the owner user's role descriptors associated with the API key.
      * An API key's actual permission is the intersection of its assigned role descriptors and the owner user's role descriptors (effectively limited by it).
      * An API key cannot retrieve any API key’s limited-by role descriptors (including itself) unless it has `manage_api_key` or higher privileges.
+     * @server_default false
      * @availability stack since=8.5.0
      * @availability serverless
      */

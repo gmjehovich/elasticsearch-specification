@@ -21,6 +21,7 @@ import { RequestBase } from '@_types/Base'
 import {
   ExpandWildcards,
   Indices,
+  MediaType,
   ProjectRouting,
   Routing,
   SearchType
@@ -70,9 +71,16 @@ export interface Request extends RequestBase {
      */
     index?: Indices
   }
+  request_media_type: MediaType.Ndjson
+  response_media_type: MediaType.Json
   query_parameters: {
     /**
-     * If false, the request returns an error if any wildcard expression, index alias, or _all value targets only missing or closed indices. This behavior applies even if the request targets other open indices. For example, a request targeting foo*,bar* returns an error if an index starts with foo but no index starts with bar.
+     * A setting that does two separate checks on the index expression.
+     * If `false`, the request returns an error (1) if any wildcard expression
+     * (including `_all` and `*`) resolves to zero matching indices or (2) if the
+     * complete set of resolved indices, aliases or data streams is empty after all
+     * expressions are evaluated. If `true`, index expressions that resolve to no
+     * indices are allowed and the request returns an empty result.
      */
     allow_no_indices?: boolean
     /**
@@ -83,15 +91,19 @@ export interface Request extends RequestBase {
     ccs_minimize_roundtrips?: boolean
     /**
      * Type of index that wildcard expressions can match. If the request can target data streams, this argument determines whether wildcard expressions match hidden data streams.
+     * @server_default open
      */
     expand_wildcards?: ExpandWildcards
     /**
      * If true, concrete, expanded or aliased indices are ignored when frozen.
+     * @deprecated 7.16.0 This parameter is deprecated because frozen indices have been deprecated.
      * @server_default false
      */
     ignore_throttled?: boolean
     /**
-     * If true, missing or closed indices are not included in the response.
+     * If `false`, the request returns an error if it targets a concrete (non-wildcarded)
+     * index, alias, or data stream that is missing, closed, or otherwise unavailable.
+     * If `true`, unavailable concrete targets are silently ignored.
      * @server_default false
      */
     ignore_unavailable?: boolean

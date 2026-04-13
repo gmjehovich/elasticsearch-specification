@@ -34,13 +34,17 @@ import {
   TaskTypeDeepSeek,
   TaskTypeElasticsearch,
   TaskTypeELSER,
+  TaskTypeFireworksAI,
   TaskTypeGoogleAIStudio,
   TaskTypeGoogleVertexAI,
+  TaskTypeGroq,
   TaskTypeHuggingFace,
   TaskTypeJinaAi,
   TaskTypeLlama,
   TaskTypeMistral,
+  TaskTypeNvidia,
   TaskTypeOpenAI,
+  TaskTypeOpenShiftAi,
   TaskTypeVoyageAI,
   TaskTypeWatsonx
 } from '../_types/TaskType'
@@ -50,7 +54,9 @@ import {
  */
 export class InferenceEndpoint {
   /**
-   * Chunking configuration object
+   * The chunking configuration object.
+   * Applies only to the `embedding`, `sparse_embedding` and `text_embedding` task types.
+   * Not applicable to the `rerank`, `completion`, or `chat_completion` task types.
    */
   chunking_settings?: InferenceChunkingSettings
   /**
@@ -245,6 +251,17 @@ export class InferenceEndpointInfoGoogleVertexAI extends InferenceEndpoint {
   task_type: TaskTypeGoogleVertexAI
 }
 
+export class InferenceEndpointInfoGroq extends InferenceEndpoint {
+  /**
+   * The inference Id
+   */
+  inference_id: string
+  /**
+   * The task type
+   */
+  task_type: TaskTypeGroq
+}
+
 export class InferenceEndpointInfoHuggingFace extends InferenceEndpoint {
   /**
    * The inference Id
@@ -289,6 +306,28 @@ export class InferenceEndpointInfoMistral extends InferenceEndpoint {
   task_type: TaskTypeMistral
 }
 
+export class InferenceEndpointInfoNvidia extends InferenceEndpoint {
+  /**
+   * The inference ID
+   */
+  inference_id: string
+  /**
+   * The task type
+   */
+  task_type: TaskTypeNvidia
+}
+
+export class InferenceEndpointInfoFireworksAI extends InferenceEndpoint {
+  /**
+   * The inference Id
+   */
+  inference_id: string
+  /**
+   * The task type
+   */
+  task_type: TaskTypeFireworksAI
+}
+
 export class InferenceEndpointInfoOpenAI extends InferenceEndpoint {
   /**
    * The inference Id
@@ -298,6 +337,17 @@ export class InferenceEndpointInfoOpenAI extends InferenceEndpoint {
    * The task type
    */
   task_type: TaskTypeOpenAI
+}
+
+export class InferenceEndpointInfoOpenShiftAi extends InferenceEndpoint {
+  /**
+   * The inference Id
+   */
+  inference_id: string
+  /**
+   * The task type
+   */
+  task_type: TaskTypeOpenShiftAi
 }
 
 export class InferenceEndpointInfoVoyageAI extends InferenceEndpoint {
@@ -396,13 +446,15 @@ export class RateLimitSetting {
    * By default, the number of requests allowed per minute is set by each service as follows:
    *
    * * `alibabacloud-ai-search` service: `1000`
+   * * `amazonbedrock` service: `240`
    * * `anthropic` service: `50`
    * * `azureaistudio` service: `240`
    * * `azureopenai` service and task type `text_embedding`: `1440`
-   * * `azureopenai` service and task type `completion`: `120`
+   * * `azureopenai` service and task types `completion` or `chat_completion`: `120`
    * * `cohere` service: `10000`
    * * `contextualai` service: `1000`
    * * `elastic` service and task type `chat_completion`: `240`
+   * * `fireworksai` service: `6000`
    * * `googleaistudio` service: `360`
    * * `googlevertexai` service: `30000`
    * * `hugging_face` service: `3000`
@@ -411,6 +463,7 @@ export class RateLimitSetting {
    * * `mistral` service: `240`
    * * `openai` service and task type `text_embedding`: `3000`
    * * `openai` service and task type `completion`: `500`
+   * * `openshift_ai` service: `3000`
    * * `voyageai` service: `2000`
    * * `watsonxai` service: `120`
    */

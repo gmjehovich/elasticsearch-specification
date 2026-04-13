@@ -18,7 +18,13 @@
  */
 
 import { RequestBase } from '@_types/Base'
-import { ExpandWildcards, Field, Indices, ProjectRouting } from '@_types/common'
+import {
+  ExpandWildcards,
+  Field,
+  Indices,
+  MediaType,
+  ProjectRouting
+} from '@_types/common'
 import { RuntimeFields } from '@_types/mapping/RuntimeFields'
 import { integer, uint } from '@_types/Numeric'
 import { FieldAndFormat, QueryContainer } from '@_types/query_dsl/abstractions'
@@ -27,6 +33,7 @@ import { ResultPosition } from './types'
 
 /**
  * Get EQL search results.
+ *
  * Returns search results for an Event Query Language (EQL) query.
  * EQL assumes each document in a data stream or index corresponds to an event.
  * @rest_spec_name eql.search
@@ -43,10 +50,19 @@ export interface Request extends RequestBase {
     }
   ]
   path_parts: {
+    /** Comma-separated list of index names to scope the operation */
     index: Indices
   }
+  request_media_type: MediaType.Json
+  response_media_type: MediaType.Json
   query_parameters: {
     /**
+     * A setting that does two separate checks on the index expression.
+     * If `false`, the request returns an error (1) if any wildcard expression
+     * (including `_all` and `*`) resolves to zero matching indices or (2) if the
+     * complete set of resolved indices, aliases or data streams is empty after all
+     * expressions are evaluated. If `true`, index expressions that resolve to no
+     * indices are allowed and the request returns an empty result.
      * @server_default true
      */
     allow_no_indices?: boolean
@@ -62,6 +78,7 @@ export interface Request extends RequestBase {
      */
     allow_partial_sequence_results?: boolean
     /**
+     * Whether to expand wildcard expression to concrete indices that are open, closed or both.
      * @server_default open
      */
     expand_wildcards?: ExpandWildcards
@@ -71,7 +88,9 @@ export interface Request extends RequestBase {
      */
     ccs_minimize_roundtrips?: boolean
     /**
-     * If true, missing or closed indices are not included in the response.
+     * If `false`, the request returns an error if it targets a concrete (non-wildcarded)
+     * index, alias, or data stream that is missing, closed, or otherwise unavailable.
+     * If `true`, unavailable concrete targets are silently ignored.
      * @server_default true
      */
     ignore_unavailable?: boolean
@@ -86,7 +105,13 @@ export interface Request extends RequestBase {
      */
     keep_on_completion?: boolean
     /**
-     * Specifies a subset of projects to target for the search using project
+     * Timeout duration to wait for the request to finish. Defaults to no timeout, meaning the request waits for complete search results.
+     */
+    wait_for_completion_timeout?: Duration
+  }
+  body: {
+    /**
+     * Specifies a subset of projects to target using project
      * metadata tags in a subset of Lucene query syntax.
      * Allowed Lucene queries: the _alias tag and a single value (possibly wildcarded).
      * Examples:
@@ -97,12 +122,6 @@ export interface Request extends RequestBase {
      * @availability serverless stability=stable visibility=feature_flag feature_flag=serverless.cross_project.enabled
      */
     project_routing?: ProjectRouting
-    /**
-     * Timeout duration to wait for the request to finish. Defaults to no timeout, meaning the request waits for complete search results.
-     */
-    wait_for_completion_timeout?: Duration
-  }
-  body: {
     /**
      * EQL query you wish to run.
      * @doc_id eql-syntax
@@ -120,7 +139,8 @@ export interface Request extends RequestBase {
      */
     tiebreaker_field?: Field
     /**
-     * Field containing event timestamp. Default "@timestamp"
+     * Field containing event timestamp.
+     * @server_default \@timestamp
      */
     timestamp_field?: Field
     /**

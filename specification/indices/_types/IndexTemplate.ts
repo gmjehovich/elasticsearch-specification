@@ -21,15 +21,19 @@ import { IndexName, Metadata, Name, Names, VersionNumber } from '@_types/common'
 import { TypeMapping } from '@_types/mapping/TypeMapping'
 import { long } from '@_types/Numeric'
 import { DateTime, EpochTime, UnitMillis } from '@_types/Time'
-import { DataStreamLifecycleWithRollover } from '@indices/_types/DataStreamLifecycle'
-import { DataStreamOptionsTemplate } from '@indices/_types/DataStreamOptions'
+import {
+  DataStreamLifecycle,
+  DataStreamLifecycleWithRollover
+} from '@indices/_types/DataStreamLifecycle'
+import { DataStreamOptions } from '@indices/_types/DataStreamOptions'
+import { OverloadOf } from '@spec_utils/behaviors'
 import { Dictionary } from '@spec_utils/Dictionary'
 import { Alias } from './Alias'
 import { IndexSettings } from './IndexSettings'
 
 export class IndexTemplate {
   /**
-   * Name of the index template.
+   * Array of wildcard (`*`) expressions used to match the names of data streams and indices during creation.
    */
   index_patterns: Names
   /**
@@ -140,10 +144,20 @@ export class IndexTemplateSummary {
    * @availability stack since=8.11.0 stability=stable
    * @availability serverless stability=stable
    */
-  lifecycle?: DataStreamLifecycleWithRollover
+  lifecycle?: DataStreamLifecycle
   /**
    * @availability stack since=8.19.0 stability=stable
    * @availability serverless stability=stable
    */
-  data_stream_options?: DataStreamOptionsTemplate | null
+  data_stream_options?: DataStreamOptions
+}
+
+export class IndexTemplateSummaryWithRollover
+  implements OverloadOf<IndexTemplateSummary>
+{
+  lifecycle?: DataStreamLifecycleWithRollover
+}
+
+export class IndexTemplateWithRollover implements OverloadOf<IndexTemplate> {
+  template?: IndexTemplateSummaryWithRollover
 }

@@ -22,6 +22,7 @@ import {
   ExpandWildcards,
   Id,
   Indices,
+  MediaType,
   ProjectRouting,
   Routing,
   SearchType
@@ -33,6 +34,7 @@ import { UserDefinedValue } from '@spec_utils/UserDefinedValue'
 
 /**
  * Run a search with a search template.
+ *
  * @rest_spec_name search_template
  * @availability stack since=2.0.0 stability=stable
  * @availability serverless stability=stable visibility=public
@@ -56,25 +58,32 @@ export interface Request extends RequestBase {
     /**
      * A comma-separated list of data streams, indices, and aliases to search.
      * It supports wildcards (`*`).
+     * @ext_doc_id search-multiple-indices
      */
     index?: Indices
   }
+  request_media_type: MediaType.Json
+  response_media_type: MediaType.Json
   query_parameters: {
     /**
-     * If `false`, the request returns an error if any wildcard expression, index alias, or `_all` value targets only missing or closed indices.
-     * This behavior applies even if the request targets other open indices.
-     * For example, a request targeting `foo*,bar*` returns an error if an index starts with `foo` but no index starts with `bar`.
+     * A setting that does two separate checks on the index expression.
+     * If `false`, the request returns an error (1) if any wildcard expression
+     * (including `_all` and `*`) resolves to zero matching indices or (2) if the
+     * complete set of resolved indices, aliases or data streams is empty after all
+     * expressions are evaluated. If `true`, index expressions that resolve to no
+     * indices are allowed and the request returns an empty result.
      * @server_default true
      */
     allow_no_indices?: boolean
     /**
-     * If `true`, network round-trips are minimized for cross-cluster search requests.
-     * @server_default false */
+     * Indicates whether network round-trips should be minimized as part of cross-cluster search requests execution.
+     * @server_default true */
     ccs_minimize_roundtrips?: boolean
     /**
      * The type of index that wildcard patterns can match.
      * If the request can target data streams, this argument determines whether wildcard expressions match hidden data streams.
      * Supports comma-separated values, such as `open,hidden`.
+     * @server_default open
      */
     expand_wildcards?: ExpandWildcards
     /**
@@ -88,8 +97,11 @@ export interface Request extends RequestBase {
      */
     ignore_throttled?: boolean
     /**
-     * If `false`, the request returns an error if it targets a missing or closed index.
-     * @server_default false */
+     * If `false`, the request returns an error if it targets a concrete (non-wildcarded)
+     * index, alias, or data stream that is missing, closed, or otherwise unavailable.
+     * If `true`, unavailable concrete targets are silently ignored.
+     * @server_default false
+     */
     ignore_unavailable?: boolean
     /**
      * The node or shard the operation should be performed on.
@@ -100,18 +112,6 @@ export interface Request extends RequestBase {
      * If `true`, the query execution is profiled.
      * @server_default false */
     profile?: boolean
-    /**
-     * Specifies a subset of projects to target for the search using project
-     * metadata tags in a subset of Lucene query syntax.
-     * Allowed Lucene queries: the _alias tag and a single value (possibly wildcarded).
-     * Examples:
-     *  _alias:my-project
-     *  _alias:_origin
-     *  _alias:*pr*
-     * Supported in serverless only.
-     * @availability serverless stability=stable visibility=feature_flag feature_flag=serverless.cross_project.enabled
-     */
-    project_routing?: ProjectRouting
     /**  A custom value used to route operations to a specific shard. */
     routing?: Routing
     /**
@@ -120,7 +120,8 @@ export interface Request extends RequestBase {
      */
     scroll?: Duration
     /**
-     * The type of the search operation. */
+     * The type of the search operation.
+     */
     search_type?: SearchType
     /**
      * If `true`, `hits.total` is rendered as an integer in the response.
@@ -162,5 +163,17 @@ export interface Request extends RequestBase {
      * parameter is required.
      */
     source?: ScriptSource
+    /**
+     * Specifies a subset of projects to target for the search using project
+     * metadata tags in a subset of Lucene query syntax.
+     * Allowed Lucene queries: the _alias tag and a single value (possibly wildcarded).
+     * Examples:
+     *  _alias:my-project
+     *  _alias:_origin
+     *  _alias:*pr*
+     * Supported in serverless only.
+     * @availability serverless stability=stable visibility=feature_flag feature_flag=serverless.cross_project.enabled
+     */
+    project_routing?: ProjectRouting
   }
 }

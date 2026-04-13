@@ -18,12 +18,14 @@
  */
 
 import { RequestBase } from '@_types/Base'
-import { Indices } from '@_types/common'
+import { Indices, MediaType } from '@_types/common'
 import { Duration } from '@_types/Time'
 import { IndexSettings } from '@indices/_types/IndexSettings'
 
 /**
  * Update data stream settings.
+ *
+ * NOTE: Available in 8.19. Not available in earlier versions.
  *
  * This API can be used to override settings on specific data streams. These overrides will take precedence over what
  * is specified in the template that the data stream matches. To prevent your data stream from getting into an invalid state,
@@ -49,6 +51,7 @@ export interface Request extends RequestBase {
      */
     name: Indices
   }
+  response_media_type: MediaType.Json
   query_parameters: {
     /**
      * If `true`, the request does not actually change the settings on any data streams or indices. Instead, it
@@ -71,7 +74,8 @@ export interface Request extends RequestBase {
      */
     timeout?: Duration
   }
-  /** Settings to be applied to the data stream.
+  /**
+   * Settings to be applied to the data stream.
    * @codegen_name settings */
   body: IndexSettings
 }

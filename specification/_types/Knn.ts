@@ -43,6 +43,12 @@ export interface KnnSearch {
   k?: integer
   /** The number of nearest neighbor candidates to consider per shard */
   num_candidates?: integer
+  /**
+   * The percentage of vectors to explore per shard while doing knn search with bbq_disk
+   * @availability stack since=9.2.0
+   * @availability serverless
+   */
+  visit_percentage?: float
   /** Boost value to apply to kNN scores */
   boost?: float
   /** Filters for the kNN search query */
@@ -52,13 +58,17 @@ export interface KnnSearch {
   /**
    * If defined, each search hit will contain inner hits.
    * @doc_id knn-inner-hits
+   * @ext_doc_id inner-hits
    */
   inner_hits?: InnerHits
-  /** Apply oversampling and rescoring to quantized vectors
+  /**
+   * Apply oversampling and rescoring to quantized vectors
    * @availability stack since=8.18.0
    * @availability serverless
    */
   rescore_vector?: RescoreVector
+  /** @codegen_name query_name */
+  _name?: string
 }
 
 /**
@@ -73,13 +83,20 @@ export interface KnnQuery extends QueryBase {
   query_vector_builder?: QueryVectorBuilder
   /** The number of nearest neighbor candidates to consider per shard */
   num_candidates?: integer
+  /**
+   * The percentage of vectors to explore per shard while doing knn search with bbq_disk
+   * @availability stack since=9.2.0
+   * @availability serverless
+   */
+  visit_percentage?: float
   /** The final number of nearest neighbors to return as top hits */
   k?: integer
   /** Filters for the kNN search query */
   filter?: QueryContainer | QueryContainer[]
   /** The minimum similarity for a vector to be considered a match */
   similarity?: float
-  /** Apply oversampling and rescoring to quantized vectors
+  /**
+   * Apply oversampling and rescoring to quantized vectors
    * @availability stack since=8.18.0
    * @availability serverless
    */
@@ -89,6 +106,13 @@ export interface KnnQuery extends QueryBase {
 /** @variants container */
 export interface QueryVectorBuilder {
   text_embedding?: TextEmbedding
+  /**
+   * Lookup a vector from an existing document.
+   * Must reference a dense_vector field and a single value.
+   * @availability stack since=9.4.0
+   * @availability serverless
+   */
+  lookup?: LookupQueryVectorBuilder
 }
 
 export interface TextEmbedding {
@@ -99,5 +123,17 @@ export interface TextEmbedding {
    * @availability serverless
    */
   model_id?: string
+  /** The text to be converted into a vector by the specified model */
   model_text: string
+}
+
+export interface LookupQueryVectorBuilder {
+  /** The ID of the document to fetch the vector from */
+  id: string
+  /** The name of the index to fetch the document from */
+  index: string
+  /** The name of the field containing the vector */
+  path: string
+  /** The routing value to use when fetching the document */
+  routing?: string
 }

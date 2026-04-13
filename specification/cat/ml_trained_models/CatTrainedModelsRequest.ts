@@ -17,7 +17,7 @@
  * under the License.
  */
 
-import { Id } from '@_types/common'
+import { Id, MediaType } from '@_types/common'
 import { integer } from '@_types/Numeric'
 import { CatRequestBase, CatTrainedModelsColumns } from '@cat/_types/CatBase'
 
@@ -53,6 +53,7 @@ export interface Request extends CatRequestBase {
      */
     model_id?: Id
   }
+  response_media_type: MediaType.Text | MediaType.Json
   query_parameters: {
     /**
      * Specifies what to do when the request: contains wildcard expressions and there are no models that match; contains the `_all` string or no identifiers and there are no matches; contains wildcard expressions and there are only partial matches.
@@ -65,9 +66,15 @@ export interface Request extends CatRequestBase {
     h?: CatTrainedModelsColumns
     /** A comma-separated list of column names or aliases used to sort the response. */
     s?: CatTrainedModelsColumns
-    /** Skips the specified number of transforms. */
+    /**
+     * Skips the specified number of transforms.
+     * @server_default 0
+     */
     from?: integer
-    /** The maximum number of transforms to display. */
+    /**
+     * The maximum number of transforms to display.
+     * @server_default 100
+     */
     size?: integer
   }
 }

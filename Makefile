@@ -41,7 +41,7 @@ setup:	## Install dependencies for contrib target
 	@npm install --prefix typescript-generator
 	@npm install --prefix validator
 	@npm install --prefix specification
-	@npm install @redocly/cli
+	@npm install @redocly/cli bump-cli
 	@npm install --prefix docs/examples
 
 clean-dep:	## Clean npm dependencies
@@ -50,6 +50,10 @@ clean-dep:	## Clean npm dependencies
 
 transform-expand-generics: ## Create a new schema with all generics expanded
 	@npm run transform-expand-generics --prefix compiler
+
+transform-to-rest-api-spec: ## Generate the REST API spec from the compiled schema
+	@rm -rf specification/_json_spec/*.json
+	@npm run transform-to-rest-api-spec --prefix compiler -- --schema output/schema/schema.json --output specification/_json_spec
 
 transform-to-openapi: ## Generate the OpenAPI definition from the compiled schema
 	@npm run transform-to-openapi -- --schema output/schema/schema.json --flavor stack --output output/openapi/elasticsearch-openapi.json
@@ -78,6 +82,7 @@ overlay-docs: ## Apply overlays to OpenAPI documents
 	rm output/openapi/elasticsearch-openapi-docs.tmp*.json
 
 generate-language-examples:
+	@npm update --prefix docs/examples @elastic/request-converter
 	@node docs/examples/generate-language-examples.js
 	@npm run format:fix-examples --prefix compiler
 

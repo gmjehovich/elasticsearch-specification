@@ -17,14 +17,7 @@
  * under the License.
  */
 
-import {
-  Field,
-  Fuzziness,
-  Id,
-  IndexName,
-  Routing,
-  SuggestMode
-} from '@_types/common'
+import { Field, Fuzziness, Id, IndexName, SuggestMode } from '@_types/common'
 import { GeoHashPrecision, GeoLocation } from '@_types/Geo'
 import { double, float, integer, long } from '@_types/Numeric'
 import { ScriptSource } from '@_types/Scripting'
@@ -77,7 +70,7 @@ export class CompletionSuggestOption<TDocument> {
   fields?: Dictionary<string, UserDefinedValue>
   _id?: string
   _index?: IndexName
-  _routing?: Routing
+  _routing?: string
   _score?: double
   _source?: TDocument
   text: string
@@ -186,6 +179,7 @@ export class RegexOptions {
    * Optional operators for the regular expression.
    * @doc_id regexp-syntax
    */
+  // eslint-disable-next-line es-spec-validator/no-inline-unions -- TODO: create named alias
   flags?: integer | string
   /**
    * Maximum number of automaton states required for the query.
@@ -410,10 +404,6 @@ export class PhraseSuggester extends SuggesterBase {
    * The default model is Stupid Backoff.
    */
   smoothing?: SmoothingModelContainer
-  /**
-   * The text/query to provide suggestions for.
-   */
-  text?: string
   token_limit?: integer
 }
 
@@ -561,9 +551,4 @@ export class TermSuggester extends SuggesterBase {
    * Controls what suggestions are included or controls for what suggest text terms, suggestions should be suggested.
    */
   suggest_mode?: SuggestMode
-  /**
-   * The suggest text.
-   * Needs to be set globally or per suggestion.
-   */
-  text?: string
 }

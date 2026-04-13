@@ -23,6 +23,7 @@ import {
   Fields,
   Id,
   IndexName,
+  MediaType,
   Routing,
   VersionNumber,
   VersionType
@@ -102,6 +103,8 @@ export interface Request<TDocument> extends RequestBase {
      */
     id?: Id
   }
+  request_media_type: MediaType.Json
+  response_media_type: MediaType.Json
   query_parameters: {
     /**
      * A comma-separated list or wildcard expressions of fields to include in the statistics.
@@ -145,6 +148,7 @@ export interface Request<TDocument> extends RequestBase {
     realtime?: boolean
     /**
      * A custom value that is used to route operations to a specific shard.
+     * @ext_doc_id search-shard-routing
      */
     routing?: Routing
     /**
@@ -227,6 +231,7 @@ export interface Request<TDocument> extends RequestBase {
     term_statistics?: boolean
     /**
      * A custom value that is used to route operations to a specific shard.
+     * @ext_doc_id search-shard-routing
      */
     routing?: Routing
     /**

@@ -18,7 +18,7 @@
  */
 
 import { RequestBase } from '@_types/Base'
-import { Indices, ProjectRouting, SearchType } from '@_types/common'
+import { Indices, MediaType, ProjectRouting, SearchType } from '@_types/common'
 import { long } from '@_types/Numeric'
 import { RequestItem } from './types'
 
@@ -62,9 +62,12 @@ export interface Request extends RequestBase {
      * A comma-separated list of data streams, indices, and aliases to search.
      * It supports wildcards (`*`).
      * To search all data streams and indices, omit this parameter or use `*`.
+     * @ext_doc_id search-multiple-indices
      */
     index?: Indices
   }
+  request_media_type: MediaType.Ndjson
+  response_media_type: MediaType.Json
   query_parameters: {
     /**
      * If `true`, network round-trips are minimized for cross-cluster search requests.
